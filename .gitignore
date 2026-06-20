@@ -1,0 +1,17 @@
+# Dependencies and Playwright artifacts
+node_modules/
+.cache/
+ms-playwright/
+
+# Configuration with secrets (account-binding token)
+.env
+.env.local
+
+# Logs
+*.log
+worker.log
+npm-debug.log*
+
+# OS
+.DS_Store
+Thumbs.db

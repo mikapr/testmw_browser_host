@@ -1,0 +1,15 @@
+node_modules/
+.cache/
+ms-playwright/
+.env
+.env.local
+*.log
+worker.log
+npm-debug.log*
+.git/
+.gitignore
+.DS_Store
+Thumbs.db
+e2e-full.test.js
+e2e-worker.test.js
+README.md

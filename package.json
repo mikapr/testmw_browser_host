@@ -1,0 +1,21 @@
+{
+  "name": "testmw-browser-host",
+  "version": "1.0.0",
+  "description": "TestMW Browser Host — a thin local agent: it launches a browser on the user's side and proxies control of it from the TestMW server through a relay. All actions/analysis logic stays on the server.",
+  "main": "src/index.js",
+  "scripts": {
+    "start": "node src/index.js",
+    "dev": "node --watch src/index.js",
+    "postinstall": "playwright install chromium"
+  },
+  "dependencies": {
+    "axios": "^1.7.0",
+    "dotenv": "^16.4.0",
+    "https-proxy-agent": "^7.0.5",
+    "playwright": "^1.52.0",
+    "ws": "^8.20.1"
+  },
+  "engines": {
+    "node": ">=20.0.0"
+  }
+}
