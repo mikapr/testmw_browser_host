@@ -1,6 +1,6 @@
-// Полный e2e: relay (real) + browser-host (real, с Chromium) + воркер,
-// который делает chromium.connect через релей и реально управляет браузером
-// в "сети пользователя". Mock API сервера отдаёт /host/me|heartbeat|offline.
+// Full e2e: relay (real) + browser-host (real, with Chromium) + a worker that
+// does chromium.connect through the relay and really drives the browser in the
+// "user's network". The mock API server serves /host/me|heartbeat|offline.
 const http = require('http');
 const crypto = require('crypto');
 const { spawn } = require('child_process');
@@ -28,7 +28,7 @@ const wait = ms => new Promise(r => setTimeout(r, ms));
 function cleanup(code) { for (const p of procs) { try { p.kill('SIGKILL'); } catch {} } process.exit(code); }
 
 (async () => {
-  // 1) Mock API сервера
+  // 1) Mock API server
   const api = http.createServer((req, res) => {
     let b = ''; req.on('data', c => b += c); req.on('end', () => {
       if (req.url === '/host/me') { res.writeHead(200, { 'content-type': 'application/json' }); res.end(JSON.stringify({ ok: true, userId: 163 })); }
@@ -39,22 +39,22 @@ function cleanup(code) { for (const p of procs) { try { p.kill('SIGKILL'); } cat
   });
   await new Promise(r => api.listen(API_PORT, r));
 
-  // 2) Релей (отдельный процесс)
+  // 2) Relay (separate process)
   spawnNode(RELAY_DIR, {
     PORT: String(RELAY_PORT), SERVER_API_URL: `http://127.0.0.1:${API_PORT}`,
     HOST_RELAY_SECRET: SECRET, LOG_LEVEL: 'info',
   });
   await wait(1200);
 
-  // 3) Browser-host (отдельный процесс, реальный Chromium)
+  // 3) Browser-host (separate process, real Chromium)
   spawnNode(HOST_DIR, {
     RELAY_URL: `ws://127.0.0.1:${RELAY_PORT}/host`, WORKER_TOKEN: 'agenttoken',
     HOST_NAME: 'e2e-host', TRANSPORT_MODE: 'ws', HEADLESS: 'true', LOG_LEVEL: 'info',
   });
-  // ждём, пока агент зарегистрируется (heartbeat) на релее
+  // wait for the agent to register (heartbeat) with the relay
   await wait(2500);
 
-  // 4) Воркер: chromium.connect через релей и реальное управление браузером
+  // 4) Worker: chromium.connect through the relay and real browser control
   const token = mint({ task_id: 555, host_id: 99, user_id: 163, exp: Math.floor(Date.now() / 1000) + 120 });
   const wsUrl = `ws://127.0.0.1:${RELAY_PORT}/connect?token=${encodeURIComponent(token)}`;
   console.log('WORKER: chromium.connect →', wsUrl);

@@ -1,6 +1,6 @@
-// e2e через РЕАЛЬНЫЙ код воркера: Worker.connectRemoteBrowser() +
-// getBrowserFor() override. Поднимаем relay + browser-host (как в e2e-full),
-// но коннект делает настоящий класс Worker из webboy_worker_new.
+// e2e through the REAL worker code: Worker.connectRemoteBrowser() +
+// getBrowserFor() override. We spin up relay + browser-host (as in e2e-full),
+// but the connect is done by the real Worker class from webboy_worker_new.
 const http = require('http');
 const crypto = require('crypto');
 const { spawn } = require('child_process');
@@ -41,7 +41,7 @@ function cleanup(code) { for (const p of procs) { try { p.kill('SIGKILL'); } cat
   spawnNode(HOST_DIR, { RELAY_URL: `ws://127.0.0.1:${RELAY_PORT}/host`, WORKER_TOKEN: 'tok', HOST_NAME: 'worker-e2e', TRANSPORT_MODE: 'ws', HEADLESS: 'true', LOG_LEVEL: 'info' });
   await wait(2500);
 
-  // Дескриптор как его формирует сервер (HostRoutingService::connectionDescriptor)
+  // Descriptor as the server builds it (HostRoutingService::connectionDescriptor)
   const descriptor = {
     host_id: 42,
     relay_url: `ws://127.0.0.1:${RELAY_PORT}`,
@@ -53,7 +53,7 @@ function cleanup(code) { for (const p of procs) { try { p.kill('SIGKILL'); } cat
   worker._remoteBrowser = await worker.connectRemoteBrowser(descriptor);
   console.log('WORKER: подключился ✅');
 
-  // getBrowserFor должен вернуть удалённый браузер (override), а не локальный пул.
+  // getBrowserFor must return the remote browser (override), not the local pool.
   const br = await worker.getBrowserFor('chromium');
   const sameAsRemote = br === worker._remoteBrowser;
   const ctx = await br.newContext();
@@ -63,7 +63,7 @@ function cleanup(code) { for (const p of procs) { try { p.kill('SIGKILL'); } cat
   await worker._remoteBrowser.close();
   worker._remoteBrowser = null;
 
-  // override снят → getBrowserFor больше НЕ должен возвращать удалённый
+  // override removed → getBrowserFor must NO LONGER return the remote one
   console.log('WORKER: title =', title, '| getBrowserFor→remote =', sameAsRemote);
   const pass = title === 'WORKER_PATH_OK' && sameAsRemote;
   console.log(pass ? 'WORKER_E2E_PASS ✅' : 'WORKER_E2E_FAIL ❌');

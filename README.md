@@ -101,9 +101,9 @@ All configuration is via environment variables (or `.env`). Sensible defaults
 mean you usually only need `WORKER_TOKEN`.
 
 | Variable             | Default                          | Description                                                        |
-| -------------------- | -------------------------------- | ------------------------------------------------------------------ |
+| -------------------- |----------------------------------| ------------------------------------------------------------------ |
 | `WORKER_TOKEN`       | — (**required**)                 | Account-binding token from the TestMW dashboard.                   |
-| `RELAY_URL`          | `wss://testmw.ru/relay/host`     | TestMW relay address. Keep `wss://` on 443 unless self-hosting.    |
+| `RELAY_URL`          | `wss://www.testmw.ru/relay/host` | TestMW relay address. Keep `wss://` on 443 unless self-hosting.    |
 | `HOST_NAME`          | machine hostname                 | Display name in the dashboard's online-hosts list.                 |
 | `TRANSPORT_MODE`     | `auto`                           | `auto` (WS→polling), `ws`, or `polling`.                           |
 | `HEADLESS`           | `true`                           | Set `false` to watch the browser locally while debugging.          |
